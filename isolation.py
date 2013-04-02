@@ -9,6 +9,9 @@ from find import find
 
 
 def run(directory='.'):
+    """Runs nose tests in isolation, and aggregates the coverage reports
+    :param directory: directory in which to run the nose tests
+    """
     found_tests = [test for test in find(directory)]
     succeeded = []
     if found_tests:

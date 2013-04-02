@@ -10,7 +10,9 @@ TEST_MATCHER = re.compile(r'(^|[b_./-])[Tt]est.*.py(?<!=__init__\.py)$')
 
 
 def find(path='./'):
-
+    """Find tests within the given path
+    :param path: The path in which to find tests
+    """
     for root_directory, _, file_names in os.walk(path):
         for file_name in file_names:
             if TEST_MATCHER.search(file_name):
