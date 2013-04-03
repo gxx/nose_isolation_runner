@@ -7,7 +7,7 @@ import re
 import sys
 
 
-TEST_MATCHER = re.compile(r'(?:^|[b_./-])(?:[Tt]est|[Ss]pec).*.py(?<!__init__\.py)$')
+TEST_MATCHER = re.compile(r'(?:^|[b_./-])(?:[Tt]est|[Ss]pec).*\.py(?<!__init__\.py)$')
 RELATIVE_PATHS = set(('.', '..'))
 
 
