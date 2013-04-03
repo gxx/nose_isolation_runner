@@ -48,8 +48,10 @@ def run(directory='.', *options):
                                           XUNIT_FILE_NAME_FORMAT
                                           % {'number': test_number})
             process = subprocess.Popen(['nosetests', test, COVER_OPTION, XUNIT_OPTION,
-                                        '--xunit-file=%s' % xunit_filename] + options,
-                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                        '--xunit-file=%s' % xunit_filename,
+                                        '--cover-package=%s' % directory.strip('/')]
+                                       + options, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
                 sys.stdout.write('Test failed: "%s"\n'
