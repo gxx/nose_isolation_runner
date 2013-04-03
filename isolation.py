@@ -9,6 +9,8 @@ from find import find
 
 
 COVER_OPTION = '--with-cover'
+XUNIT_OPTION = '--with-xunit'
+XUNIT_FILE_NAME_FORMAT = 'TEST-results-%(number)d.xml'
 COVERAGE_FILE = '.coverage'
 FAIL_MESSAGE = ' [FAILED!]\n'
 ERROR_MESSAGE = ' [ERROR!]\n'
@@ -20,9 +22,6 @@ def run(directory='.', *options):
     :param directory: directory in which to run the nose tests
     """
     options = list(options)
-    if COVER_OPTION in options:
-        options.remove(COVER_OPTION)
-
     current_working_directory = os.getcwd()
     found_tests = [test for test in find(directory)]
     succeeded = 0
@@ -32,7 +31,9 @@ def run(directory='.', *options):
             test_number = number + 1
             sys.stdout.write('Running test #%d...' % test_number)
             sys.stdout.flush()
-            process = subprocess.Popen(['nosetests', test, COVER_OPTION] + options,
+            xunit_filename = XUNIT_FILE_NAME_FORMAT % {'number': number}
+            process = subprocess.Popen(['nosetests', test, COVER_OPTION, XUNIT_OPTION,
+                                        '--xunit-file=%s' % xunit_filename] + options,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
