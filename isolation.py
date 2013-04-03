@@ -31,7 +31,7 @@ def run(directory='.', *options):
             test_number = number + 1
             sys.stdout.write('Running test #%d...' % test_number)
             sys.stdout.flush()
-            xunit_filename = XUNIT_FILE_NAME_FORMAT % {'number': number}
+            xunit_filename = XUNIT_FILE_NAME_FORMAT % {'number': test_number}
             process = subprocess.Popen(['nosetests', test, COVER_OPTION, XUNIT_OPTION,
                                         '--xunit-file=%s' % xunit_filename] + options,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
