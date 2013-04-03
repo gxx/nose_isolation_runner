@@ -17,18 +17,23 @@ FAIL_MESSAGE = ' [FAILED!]\n'
 ERROR_MESSAGE = ' [ERROR!]\n'
 OK_MESSAGE = ' [OK]\n'
 DEFAULT_XUNIT_FILE_DIR = './'
+DEFAULT_DIRECTORY = '.'
 
 
-def run(directory='.', *options):
+def run(*options):
     """Runs nose tests in isolation, and aggregates the coverage reports
     :param directory: directory in which to run the nose tests
     """
     options = list(options)
+    directory = DEFAULT_DIRECTORY
     xunit_file_dir = DEFAULT_XUNIT_FILE_DIR
-    for index, option in enumerate(copy(options)):
+    for option in copy(options):
         if option.startswith('--xunit-file-dir='):
-            del options[index]
+            options.remove(option)
             xunit_file_dir = option[option.index('=') + 1:]
+        elif option.startswith('--directory='):
+            options.remove(option)
+            directory = option[option.index('=') + 1:]
 
     if not os.path.exists(xunit_file_dir):
         sys.stderr.write('Xunit file directory "%s" does not exist!\n')
