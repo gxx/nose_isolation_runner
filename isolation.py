@@ -8,16 +8,21 @@ import sys
 from find import find
 
 
+COVER_OPTION = '--with-cover'
 COVERAGE_FILE = '.coverage'
 FAIL_MESSAGE = ' [FAILED!]\n'
 ERROR_MESSAGE = ' [ERROR!]\n'
 OK_MESSAGE = ' [OK]\n'
 
 
-def run(directory='.'):
+def run(directory='.', *options):
     """Runs nose tests in isolation, and aggregates the coverage reports
     :param directory: directory in which to run the nose tests
     """
+    options = list(options)
+    if COVER_OPTION in options:
+        options.remove(COVER_OPTION)
+
     current_working_directory = os.getcwd()
     found_tests = [test for test in find(directory)]
     succeeded = 0
@@ -27,7 +32,7 @@ def run(directory='.'):
             test_number = number + 1
             sys.stdout.write('Running test #%d...' % test_number)
             sys.stdout.flush()
-            process = subprocess.Popen(['nosetests', test, '--with-cover'],
+            process = subprocess.Popen(['nosetests', test, COVER_OPTION] + options,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
@@ -65,12 +70,8 @@ def run(directory='.'):
 
 
 def main():
-    if len(sys.argv) > 2:
-        sys.stderr.write('Too many arguments provided for directory\n')
-        sys.stderr.flush()
-        sys.exit(1)
-    elif len(sys.argv) == 2:
-        run(sys.argv[1])
+    if len(sys.argv) > 1:
+        run(sys.argv[1:])
     else:
         run()
 
