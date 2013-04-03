@@ -8,12 +8,18 @@ import sys
 from find import find
 
 
+COVERAGE_FILE = '.coverage'
+FAIL_MESSAGE = ' [FAILED!]\n'
+ERROR_MESSAGE = ' [ERROR!]\n'
+OK_MESSAGE = ' [OK]\n'
+
+
 def run(directory='.'):
     """Runs nose tests in isolation, and aggregates the coverage reports
     :param directory: directory in which to run the nose tests
     """
     found_tests = [test for test in find(directory)]
-    succeeded = []
+    succeeded = 0
     if found_tests:
         print 'Found %d tests' % len(found_tests)
         for number, test in enumerate(found_tests):
@@ -23,31 +29,33 @@ def run(directory='.'):
             process = subprocess.Popen(['nosetests', test, '--with-cover'],
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
-                sys.stdout.write(' [FAILED!]\n')
+                sys.stdout.write(FAIL_MESSAGE)
                 sys.stdout.flush()
             else:
-                sys.stdout.write(' [OK]\n')
+                sys.stdout.write(OK_MESSAGE)
                 sys.stdout.flush()
-                if os.path.exists('.coverage'):
-                    os.rename('.coverage', '.coverage.%d' % test_number)
-                    succeeded.append(test_number)
+                if os.path.exists(COVERAGE_FILE):
+                    os.rename(COVERAGE_FILE, '.coverage.%d' % test_number)
+                    succeeded += 1
                 else:
-                    sys.stdout.write(' [ERROR!]\n')
+                    sys.stdout.write(ERROR_MESSAGE)
                     sys.stdout.flush()
                     sys.stderr.write('Cannot find coverage file\n')
                     sys.stderr.flush()
 
+        sys.stdout.write('%d of %d tests passed\n' % (succeeded, len(found_tests)))
         sys.stdout.write('Combining coverage data...')
+        sys.stdout.flush()
         process = subprocess.Popen(['coverage', 'combine'], stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         if process.wait():
-            sys.stdout.write(' [ERROR!]\n')
+            sys.stdout.write(ERROR_MESSAGE)
             sys.stdout.flush()
             sys.stderr.write(process.stderr.read())
             sys.stderr.flush()
             sys.exit(1)
         else:
-            sys.stdout.write(' [OK]\n')
+            sys.stdout.write(OK_MESSAGE)
             sys.stdout.flush()
     else:
         print 'Did not find any tests to run'
