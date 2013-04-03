@@ -18,6 +18,7 @@ def run(directory='.'):
     """Runs nose tests in isolation, and aggregates the coverage reports
     :param directory: directory in which to run the nose tests
     """
+    current_working_directory = os.getcwd()
     found_tests = [test for test in find(directory)]
     succeeded = 0
     if found_tests:
@@ -30,6 +31,8 @@ def run(directory='.'):
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
+                sys.stdout.write('Failed fail: "%s"\n'
+                                 % os.path.relpath(test, current_working_directory))
                 sys.stdout.flush()
             else:
                 sys.stdout.write(OK_MESSAGE)
