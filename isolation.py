@@ -31,7 +31,7 @@ def run(directory='.'):
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
-                sys.stdout.write('Failed fail: "%s"\n'
+                sys.stdout.write('Test failed: "%s"\n'
                                  % os.path.relpath(test, current_working_directory))
                 sys.stdout.flush()
             else:
