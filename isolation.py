@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8
 """Run nose tests in proper isolation and collect coverage reports"""
+from copy import copy
 import os
 import subprocess
 import sys
@@ -15,6 +16,7 @@ COVERAGE_FILE = '.coverage'
 FAIL_MESSAGE = ' [FAILED!]\n'
 ERROR_MESSAGE = ' [ERROR!]\n'
 OK_MESSAGE = ' [OK]\n'
+DEFAULT_XUNIT_FILE_DIR = './'
 
 
 def run(directory='.', *options):
@@ -22,6 +24,17 @@ def run(directory='.', *options):
     :param directory: directory in which to run the nose tests
     """
     options = list(options)
+    xunit_file_dir = DEFAULT_XUNIT_FILE_DIR
+    for index, option in enumerate(copy(options)):
+        if option.startswith('--xunit-file-dir='):
+            del options[index]
+            xunit_file_dir = option[option.index('=') + 1:]
+
+    if not os.path.exists(xunit_file_dir):
+        sys.stderr.write('Xunit file directory "%s" does not exist!\n')
+        sys.stderr.flush()
+        sys.exit(1)
+
     current_working_directory = os.getcwd()
     found_tests = [test for test in find(directory)]
     succeeded = 0
@@ -31,7 +44,9 @@ def run(directory='.', *options):
             test_number = number + 1
             sys.stdout.write('Running test #%d...' % test_number)
             sys.stdout.flush()
-            xunit_filename = XUNIT_FILE_NAME_FORMAT % {'number': test_number}
+            xunit_filename = os.path.join(xunit_file_dir,
+                                          XUNIT_FILE_NAME_FORMAT
+                                          % {'number': test_number})
             process = subprocess.Popen(['nosetests', test, COVER_OPTION, XUNIT_OPTION,
                                         '--xunit-file=%s' % xunit_filename] + options,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
