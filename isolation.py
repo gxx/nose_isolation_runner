@@ -71,7 +71,7 @@ def run(directory='.', *options):
 
 def main():
     if len(sys.argv) > 1:
-        run(sys.argv[1:])
+        run(*sys.argv[1:])
     else:
         run()
 

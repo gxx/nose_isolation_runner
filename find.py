@@ -48,7 +48,7 @@ def find(path='./'):
     try:
         ignore_matcher = GitIgnoreMatcher.load(os.path.join(path, '.gitignore'))
     except IOError:
-        ignore_matcher = GitIgnoreMatcher() # Dummy empty matcher
+        ignore_matcher = GitIgnoreMatcher()  # Dummy empty matcher
 
     for root_directory, _, file_names in os.walk(path):
         for file_name in file_names:
