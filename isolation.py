@@ -47,7 +47,7 @@ def run(*options):
         print 'Found %d tests' % len(found_tests)
         for number, test in enumerate(found_tests):
             test_number = number + 1
-            sys.stdout.write('Running test #%d...' % test_number)
+            sys.stdout.write('Running test #%d "%s"...' % (test_number, test))
             sys.stdout.flush()
             xunit_filename = os.path.join(xunit_file_dir,
                                           XUNIT_FILE_NAME_FORMAT
@@ -57,8 +57,6 @@ def run(*options):
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if process.wait():
                 sys.stdout.write(FAIL_MESSAGE)
-                sys.stdout.write('Test failed: "%s"\n'
-                                 % os.path.relpath(test, current_working_directory))
                 sys.stdout.flush()
             else:
                 sys.stdout.write(OK_MESSAGE)
